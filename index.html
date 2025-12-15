@@ -4,22 +4,32 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="manifest" href="./manifest.json">
+    <link rel="manifest" href="./manifest.webmanifest">
     <title>Examen 14 - Geo + Push</title>
+
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <style>
+        #map {
+            height: 300px;
+            margin-top: 1rem;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>📍 Geolocalización + 🔔 Push</h1>
+    <h1>📍 Geolocalización + 🔔 Firebase</h1>
 
     <button id="btn-geo">Obtener ubicación</button>
     <p id="coords">—</p>
+    <div id="map"></div>
 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script type="module" src="./app.js"></script>
     <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js')
-                .then(() => console.log('Service Worker registrado'))
-                .catch(err => console.error('Error SW', err));
+            navigator.serviceWorker.register('./sw.js');
         }
     </script>
 </body>

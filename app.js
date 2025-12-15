@@ -1,31 +1,45 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
+import { getMessaging } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
 
-// 🔥 Firebase config (del profe)
+// Firebase config
 const firebaseConfig = {
     apiKey: "AIzaSyBPMtb2JbTvQKvJQAQnGw5FaYWpdvMGbeE",
     authDomain: "examen3-firebase.firebaseapp.com",
     projectId: "examen3-firebase",
+    storageBucket: "examen3-firebase.firebasestorage.app",
     messagingSenderId: "920573259228",
     appId: "1:920573259228:web:11739fcc30d606858db319"
 };
 
-const app = initializeApp(firebaseConfig);
-const messaging = getMessaging(app);
+initializeApp(firebaseConfig);
+getMessaging();
 
 const btn = document.querySelector("#btn-geo");
 const coords = document.querySelector("#coords");
 
-// Permiso de notificaciones
+let map, marker;
+
+// Permiso notificaciones
 if (Notification.permission !== "granted") {
     Notification.requestPermission();
 }
 
-// 📍 Obtener ubicación
 btn.addEventListener("click", () => {
     navigator.geolocation.getCurrentPosition(pos => {
         const { latitude, longitude } = pos.coords;
         coords.textContent = `Lat: ${latitude} | Lng: ${longitude}`;
+
+        // MAPA
+        if (!map) {
+            map = L.map("map").setView([latitude, longitude], 16);
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                attribution: "© OpenStreetMap"
+            }).addTo(map);
+            marker = L.marker([latitude, longitude]).addTo(map);
+        } else {
+            map.setView([latitude, longitude], 16);
+            marker.setLatLng([latitude, longitude]);
+        }
 
         // 🔔 Notificación basada en ubicación
         navigator.serviceWorker.ready.then(reg => {
@@ -34,7 +48,5 @@ btn.addEventListener("click", () => {
                 icon: "./192.png"
             });
         });
-    }, () => {
-        coords.textContent = "No se pudo obtener la ubicación";
     });
 });
